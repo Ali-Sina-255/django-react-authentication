@@ -5,7 +5,8 @@ import environ
 
 # Initialize environment variables
 env = environ.Env()
-environ.Env.read_env()  # Make sure to read the .env file
+
+
 AUTH_USER_MODEL = "users.User"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +38,7 @@ THIRD_PARTY_APPS = [
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "rest_framework.authtoken",
+    "djcelery_email",
 ]
 LOCAL_APPS = ["core_apps.profiles", "core_apps.common", "core_apps.users"]
 
@@ -195,16 +197,13 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 
 
-# Disable username field
+CELERY_BROKER_URL = env("CELERY_BROKER")
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_RESULT_BACKEND_MAX_RETRIES = 10
+CELERY_TASK_SEND_SENT_EVENT = True
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-from decouple import config
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mailhog"
-EMAIL_PORT = config("EMAIL_PORT", cast=int)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
