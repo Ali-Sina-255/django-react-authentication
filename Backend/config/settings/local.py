@@ -1,7 +1,9 @@
+from decouple import config
+
 from .base import *
 from .base import env
 
-SECRET_KEY = env(
+SECRET_KEY = config(
     "DJANGO-SECRET_KEY",
     default="AuG1XPiMlZmrJ5UH0eo426fBPCPaz6gYWjzLAaq2vsngwXI0XhutooZKnf_th4wghOcAj5s6Jnus3vyR",
 )
